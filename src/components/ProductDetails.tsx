@@ -1,10 +1,22 @@
 import type { Product } from '../types'
 import { formatCurrency } from '../utils'
-import { type ActionFunctionArgs, Form, redirect, useFetcher, useNavigate } from 'react-router'
-import { deleteProduct } from '../services/ProductService.ts'
+import { type ActionFunctionArgs, Form, type LoaderFunctionArgs, redirect, useFetcher, useNavigate } from 'react-router'
+import { deleteProduct, getProductById } from '../services/ProductService.ts'
 
 type ProductDetailsProps = {
   product: Product
+}
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  if (params.id !== undefined) {
+    const product = await getProductById(+params.id)
+
+    if (!product) {
+      return redirect('/')
+    }
+
+    return product
+  }
 }
 
 export async function action({ params }: ActionFunctionArgs) {
